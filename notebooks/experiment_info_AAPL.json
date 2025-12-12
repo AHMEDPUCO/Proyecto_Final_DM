@@ -1,0 +1,49 @@
+{
+  "timestamp": "2025-12-12 16:26:08",
+  "ticker": "AAPL",
+  "best_model": "LogisticRegression",
+  "best_params": {
+    "model__C": 0.053149590974688174,
+    "model__class_weight": null,
+    "model__l1_ratio": 0.9656320330745594
+  },
+  "test_metrics": {
+    "accuracy": 0.5396825396825397,
+    "f1": 0.7010309278350515,
+    "precision": 0.5418326693227091,
+    "recall": 0.9927007299270073,
+    "roc_auc": 0.4767375436369407
+  },
+  "financial_metrics": {
+    "final_capital": 12966.529638894881,
+    "total_return": 0.29665296388948814,
+    "annualized_return": 0.29665296388948814,
+    "max_drawdown": -0.10979924478116798,
+    "sharpe_ratio": 1.4562491266601498,
+    "volatility_annual": 0.18232294841792793,
+    "n_trading_days": 252
+  },
+  "features_used": [
+    "open_lag1",
+    "high_lag1",
+    "low_lag1",
+    "close_lag1",
+    "volume_lag1",
+    "return_close_open_lag1",
+    "return_prev_close_lag1",
+    "volatility_5d_lag1",
+    "volume_ma_5",
+    "range_hl_lag1",
+    "price_range_pct",
+    "volume_change",
+    "ma_5_vs_20",
+    "momentum_5",
+    "momentum_10",
+    "volatility_10d",
+    "volatility_20d",
+    "rsi_14",
+    "day_of_week",
+    "month"
+  ],
+  "model_path": "model_trading_AAPL_LogisticRegression.pkl"
+}

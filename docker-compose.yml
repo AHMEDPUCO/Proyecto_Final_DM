@@ -1,0 +1,64 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres_dm
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${PG_PORT}:5432"
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  jupyter:
+    # CAMBIO AQUÍ: Usamos la imagen oficial que sí existe
+    image: jupyter/scipy-notebook
+    container_name: jupyter_dm
+    restart: always
+    ports:
+      - "8888:8888"
+    environment:
+      JUPYTER_TOKEN: "dmproject"
+      PYTHONPATH: /home/jovyan/work
+    volumes:
+      - ./notebooks:/home/jovyan/work/notebooks
+      - ./src:/home/jovyan/work/src
+      - ./.env:/home/jovyan/work/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  feature-builder:
+    build:
+      context: .
+      dockerfile: feature-builder.Dockerfile
+    container_name: feature_builder_dm
+    environment:
+      PG_HOST: postgres
+      PG_PORT: 5432
+      PG_DB: ${POSTGRES_DB}
+      PG_USER: ${POSTGRES_USER}
+      PG_PASSWORD: ${POSTGRES_PASSWORD}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  model-api:
+    build:
+      context: .
+      dockerfile: model_api/Dockerfile
+    container_name: model_api_dm
+    environment:
+      MODEL_PATH: /app/model_trading_pipeline.pkl
+      API_PORT: 8000
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
